@@ -9,16 +9,19 @@
   EQUIVALENCES, CHARACTERISTICS, GENUS, EULER_POINCARE, 
          CONSTRUCTIVE CONDITION OF PLANARITY 
 
-              (J.-F. Dufourd - June 2006)
+       (J.-F. Dufourd - June 2006 - FOR PUBLICATION
+        completed in October 2007 / January 2008)
 
+(* COMPLETE, APART FROM LEMMA expf_clos_symm, WHICH IS 
+ADMITTED TO PROVE THE NECESSARY CONDITION OF PLANARITY *)
 ============================================================
 ==========================================================*)
-
-Require Export Euler2.
 
 (*==========================================================
            DART EQUIVALENCES IN QHMAPS
 ==========================================================*)
+
+Require Export Euler2.
 
 (* Face equivalence: *)
 
@@ -1363,9 +1366,9 @@ Qed.
 
 Definition planar(m:fmap):= genus m = 0.
 
-(* EULER-POINCARE FOMRMULA: *)
+(* EULER-POINCARE FORMULA: *)
 
-Theorem Euler_Poincare: forall m:fmap,
+Lemma Euler_Poincare: forall m:fmap,
   inv_qhmap m -> planar m ->
     ec m / 2 = nc m.
 Proof.
@@ -1381,9 +1384,9 @@ Qed.
          PLANARITY CRITERIA (SUFFICIENT CONDITIONS)  
 =============================================================*)
 
-(* Dimension 0: *)
+(* Sewing at dimension 0: *)
 
-Theorem expf_planar_0: forall (m:fmap)(x y:dart),
+Lemma expf_planar_0: forall (m:fmap)(x y:dart),
   inv_qhmap m -> planar m -> 
    prec_Lq m di0 x y -> let mc:= clos m in
     expf mc (A_1 mc di1 x) y -> 
@@ -1430,13 +1433,12 @@ intro.
      tauto.
  unfold inv_hmap in H3.
     tauto.
-
   apply H2.
 Qed.
 
-(* Dimension 1: *) 
+(* Sewing at dimension 1: *) 
 
-Theorem expf_planar_1: forall (m:fmap)(x y:dart),
+Lemma expf_planar_1: forall (m:fmap)(x y:dart),
   inv_qhmap m -> planar m ->
     prec_Lq m di1 x y -> let mc:= clos m in
       expf mc x (A mc di0 y) -> 
@@ -1476,13 +1478,846 @@ elim (eqc_dec (clos m) x y).
 intro.
   elim b.
    eapply expf_A_r_eqc.
-
    assert (inv_hmap (clos m)).
   apply inv_hmap_clos.
      tauto.
  unfold inv_hmap in H3.
     tauto.
   apply H2.
+Qed.
+
+(* V is planar: *)
+
+Lemma planar_V: planar V.
+Proof.
+unfold planar in |- *.
+unfold genus in |- *.
+unfold ec in |- *.
+simpl in |- *.
+ tauto.
+Qed.
+
+(* Inserting a dart preserves planarity: *)
+
+Lemma planar_I: forall (m:fmap)(x:dart),
+  inv_qhmap m -> planar m -> prec_I m x -> 
+       planar (I m x).
+Proof.
+unfold planar in |- *.
+unfold genus in |- *.
+unfold ec in |- *.
+simpl in |- *.
+unfold prec_I in |- *.
+intros.
+assert
+ (nv m + 1 + (ne m + 1) + (nf m + 1) - (nd m + 1) =
+  nv m + ne m + nf m - nd m + 1 * 2).
+  omega.
+rewrite H2 in |- *.
+  rewrite Z_div_plus in |- *.
+ clear H2.
+    omega.
+ omega.
+Qed.
+
+(* Sewing two disconnected darts preserves planarity:*)
+ 
+Lemma not_eqc_planar: forall (m:fmap)(k:dim)(x y:dart),
+  inv_qhmap m -> planar m ->  prec_Lq m k x y -> 
+     let mc:= clos m in ~eqc mc x y -> 
+         planar (L m k x y).
+Proof.
+unfold planar in |- *.
+unfold genus in |- *.
+unfold ec in |- *.
+unfold prec_Lq in |- *.
+intros.
+assert (inv_hmap (clos m)).
+ apply inv_hmap_clos.
+    tauto.
+unfold inv_hmap in H3.
+  decompose [and] H3.
+  induction k.
+ simpl in |- *.
+   elim (eqc_dec (clos m) x y).
+   tauto.
+ intro.
+   elim (eq_dart_dec (A (clos m) di0 x) y).
+  intro.
+    rewrite <- a in b.
+    elim b.
+    apply succ_eqc_A_r.
+    tauto.
+  assert (exd (clos m) x).
+   generalize (exd_clos m x).
+      tauto.
+  generalize (H5 x di0).
+     tauto.
+ elim (eq_dart_dec y (A (clos m) di0 x)).
+  intro.
+    symmetry  in a.
+     tauto.
+ elim (expf_dec (clos m) (A_1 (clos m) di1 x) y).
+  intros.
+    elim b.
+     eapply expf_A_1_l_eqc.
+      tauto.
+    apply a.
+   intros.
+   assert
+    (nv m + (ne m - 1) + (nf m + -1) - nd m =
+     nv m + ne m + nf m - nd m + -1 * 2).
+   omega.
+ rewrite H6 in |- *.
+   rewrite Z_div_plus in |- *.
+  clear H6.
+     omega.
+  omega.
+  simpl in |- *.
+  elim (eqc_dec (clos m) x y).
+  tauto.
+elim (eq_dart_dec (A (clos m) di1 x) y).
+ intros.
+   rewrite <- a in b.
+   elim b.
+   apply succ_eqc_A_r.
+   tauto.
+ assert (exd (clos m) x).
+  generalize (exd_clos m x).
+     tauto.
+ generalize (H5 x di1).
+    tauto.
+elim (eq_dart_dec y (A (clos m) di1 x)).
+ intro.
+   symmetry  in a.
+    tauto.
+elim (expf_dec (clos m) x (A (clos m) di0 y)).
+ intros.
+   elim b1.
+    eapply expf_A_r_eqc.
+     tauto.
+   apply a.
+  intros.
+  assert
+   (nv m - 1 + ne m + (nf m + -1) - nd m = 
+     nv m + ne m + nf m - nd m + -1 * 2).
+  omega.
+rewrite H6 in |- *.
+  clear H6.
+  rewrite Z_div_plus in |- *.
+  omega.
+ omega.
+Qed.
+
+(* Sewing at dimension 0 and planarity preservation: *)
+
+Lemma expf_planar_L0: forall (m:fmap)(x y:dart),
+  inv_qhmap m -> planar m -> 
+   prec_Lq m di0 x y -> let mc:= clos m in
+     (~eqc mc x y \/ expf mc (A_1 mc di1 x) y) -> 
+        planar (L m di0 x y).
+Proof.
+intros.
+elim H2.
+ intro.
+   apply not_eqc_planar.
+   tauto.
+  tauto.
+  tauto.
+  tauto.
+intro.
+  apply expf_planar_0.
+  tauto.
+ tauto.
+ tauto.
+fold mc in |- *.
+   tauto.
+Qed.
+
+(* Sewing at dimension 1 and planarity preservation: *)
+
+Lemma expf_planar_L1: forall (m:fmap)(x y:dart),
+  inv_qhmap m -> planar m -> 
+   prec_Lq m di1 x y -> let mc:= clos m in
+    (~eqc mc x y \/ expf mc x (A mc di0 y)) -> 
+       planar (L m di1 x y).
+Proof.
+intros.
+elim H2.
+ intro.
+   apply not_eqc_planar.
+   tauto.
+  tauto.
+  tauto.
+  tauto.
+intro.
+  apply expf_planar_1.
+  tauto.
+ tauto.
+ tauto.
+fold mc in |- *.
+   tauto.
+Qed.
+
+(* Definition of "Planar formation" of fmap: *)
+
+Fixpoint plf(m:fmap):Prop:=
+  match m with 
+     V => True
+   | I m0 x => plf m0
+   | L m0 di0 x y => plf m0 /\ 
+      (let mc := (clos m0) in
+        ~eqc mc x y \/ expf mc (A_1 mc di1 x) y)
+   | L m0 di1 x y => plf m0 /\ 
+      (let mc := (clos m0) in
+        ~eqc mc x y \/ expf mc x (A mc di0 y))
+  end.
+
+(* Constructive Sufficient Condition of planarity: *)
+
+Theorem plf_planar:forall (m:fmap),
+  inv_qhmap m -> plf m -> planar m.
+Proof.
+induction m.
+ simpl in |- *.
+   intros.
+   apply planar_V.
+simpl in |- *.
+  intros.
+  apply planar_I.
+  tauto.
+ tauto.
+ tauto.
+intros.
+  induction d.
+ simpl in H0.
+   simpl in H.
+   apply expf_planar_L0.
+   tauto.
+  tauto.
+  tauto.
+  tauto.
+simpl in H0.
+  simpl in H.
+  apply expf_planar_L1.
+  tauto.
+ tauto.
+ tauto.
+tauto.
+Qed.
+
+(* plf_EULER-POINCARE FORMULA: *)
+
+Theorem plf_Euler_Poincare: forall m:fmap,
+  inv_qhmap m -> plf m ->
+     ec m / 2 = nc m.
+Proof.
+intros.
+apply Euler_Poincare.
+  tauto.
+apply plf_planar.
+  tauto.
+ tauto.
+Qed.
+
+(* ==========================================================
+       
+        PLANARITY CRITERIA (NECESSARY CONDITIONS)  
+
+OK, modulo expf SYMMETRY!!
+=============================================================*)
+
+(* OK: *)
+
+Lemma eq_genus_I : forall(m:fmap)(x:dart),
+   inv_qhmap (I m x) -> genus (I m x) = genus m.
+Proof.
+unfold genus in |- *.
+unfold ec in |- *.
+simpl in |- *.
+intros.
+assert
+ (nv m + 1 + (ne m + 1) + (nf m + 1) - (nd m + 1) =
+  nv m + ne m + nf m - nd m + 1 * 2).
+  omega.
+rewrite H0 in |- *.
+  rewrite Z_div_plus in |- *.
+  omega.
+ omega.
+Qed.
+
+Lemma incr_genus_L0:forall(m:fmap)(x y:dart),
+  inv_qhmap (L m di0 x y) ->
+     genus m <= genus (L m di0 x y).
+Proof.
+unfold genus in |- *.
+unfold ec in |- *.
+simpl in |- *.
+intros.
+unfold prec_Lq in H.
+assert (inv_hmap (clos m)).
+ apply inv_hmap_clos.
+    tauto.
+unfold inv_hmap in H0.
+  decompose [and] H0.
+  clear H0.
+  assert (exd (clos m) x).
+ generalize (exd_clos m x).
+    tauto.
+assert (exd (clos m) y).
+ generalize (exd_clos m y).
+    tauto.
+elim (eqc_dec (clos m) x y).
+ elim (eq_dart_dec (A (clos m) di0 x) y).
+  elim (eq_dart_dec y (A (clos m) di0 x)).
+   intros.
+     assert
+      (nv m + (ne m - 0) + (nf m + 0) - nd m = 
+       nv m + ne m + nf m - nd m).
+     omega.
+   rewrite H4 in |- *.
+      omega.
+  intros.
+    symmetry  in a.
+     tauto.
+ elim (eq_dart_dec y (A (clos m) di0 x)).
+  intros.
+    symmetry  in a.
+     tauto.
+ elim (expf_dec (clos m) (A_1 (clos m) di1 x) y).
+  intros.
+    assert
+     (nv m + (ne m - 1) + (nf m + 1) - nd m = 
+         nv m + ne m + nf m - nd m).
+    omega.
+  rewrite H4 in |- *.
+     omega.
+ intros.
+   assert
+    (nv m + (ne m - 1) + (nf m + -1) - nd m =
+     nv m + ne m + nf m - nd m + -1 * 2).
+   omega.
+ rewrite H4 in |- *.
+   rewrite Z_div_plus in |- *.
+   omega.
+  omega.
+elim (eq_dart_dec (A (clos m) di0 x) y).
+ intros.
+   elim b.
+   rewrite <- a in |- *.
+   apply succ_eqc_A_r.
+   tauto.
+ generalize (H2 x di0).
+    tauto.
+elim (eq_dart_dec y (A (clos m) di0 x)).
+ intro.
+   symmetry  in a.
+    tauto.
+elim (expf_dec (clos m) (A_1 (clos m) di1 x) y).
+ intros.
+   elim b1.
+   apply expf_A_1_l_eqc with di1.
+   tauto.
+  tauto.
+intros.
+assert
+   (nv m + (ne m - 1) + (nf m + -1) - nd m =
+    nv m + ne m + nf m - nd m + -1 * 2).
+  omega.
+rewrite H4 in |- *.
+  rewrite Z_div_plus in |- *.
+  omega.
+ omega.
+Qed.
+
+Lemma incr_genus_L1:forall(m:fmap)(x y:dart),
+  inv_qhmap (L m di1 x y) ->
+     genus m <= genus (L m di1 x y).
+Proof.
+unfold genus.
+unfold ec in |- *.
+simpl in |- *.
+intros.
+unfold prec_Lq in H.
+assert (inv_hmap (clos m)).
+ apply inv_hmap_clos.
+    tauto.
+unfold inv_hmap in H0.
+  decompose [and] H0.
+  clear H0.
+  assert (exd (clos m) x).
+ generalize (exd_clos m x).
+    tauto.
+assert (exd (clos m) y).
+ generalize (exd_clos m y).
+    tauto.
+elim (eqc_dec (clos m) x y).
+ elim (eq_dart_dec (A (clos m) di1 x) y).
+  elim (eq_dart_dec y (A (clos m) di1 x)).
+   intros.
+     assert (nv m - 0 + ne m + (nf m + 0) - nd m = 
+        nv m + ne m + nf m - nd m).
+     omega.
+
+   rewrite H4 in |- *.
+      omega.
+  intros.
+    symmetry  in a.
+     tauto.
+ elim (eq_dart_dec y (A (clos m) di1 x)).
+  intro.
+    symmetry  in a.
+     tauto.
+ elim (expf_dec (clos m) x (A (clos m) di0 y)).
+  assert (nv m - 1 + ne m + (nf m + 1) - nd m =
+    nv m + ne m + nf m - nd m).
+    omega.
+  rewrite H4 in |- *.
+    intros.
+     omega.
+ intros.
+   assert
+    (nv m - 1 + ne m + (nf m + -1) - nd m =
+     nv m + ne m + nf m - nd m + -1 * 2).
+   omega.
+ rewrite H4 in |- *.
+   rewrite Z_div_plus in |- *.
+   omega.
+  omega.
+elim (eq_dart_dec (A (clos m) di1 x) y).
+ intros.
+   elim b.
+   rewrite <- a in |- *.
+   apply succ_eqc_A_r.
+   tauto.
+ generalize (H2 x di1).
+    tauto.
+elim (eq_dart_dec y (A (clos m) di1 x)).
+ intro.
+   symmetry  in a.
+    tauto.
+elim (expf_dec (clos m) x (A (clos m) di0 y)).
+ intros.
+   elim b1.
+   apply expf_A_r_eqc with di0.
+   tauto.
+  tauto.
+intros.
+  assert
+   (nv m - 1 + ne m + (nf m + -1) - nd m = 
+     nv m + ne m + nf m - nd m + -1 * 2).
+  omega.
+rewrite H4 in |- *.
+  rewrite Z_div_plus in |- *.
+  omega.
+ omega.
+Qed.
+
+Lemma planar_I_rcp: forall(m:fmap)(x:dart),
+  inv_qhmap (I m x) -> planar (I m x) -> planar m.
+Proof.
+unfold planar in |- *.
+intros.
+rewrite eq_genus_I in H0.
+  tauto.
+ tauto.
+Qed.
+
+Lemma planar_L0_rcp: forall(m:fmap)(x y:dart),
+  inv_qhmap (L m di0 x y) -> 
+     planar (L m di0 x y) -> planar m.
+Proof.
+unfold planar in |- *.
+intros.
+generalize (incr_genus_L0 m x y H).
+intro.
+simpl in H.
+decompose [and] H.
+clear H.
+generalize (genus_corollary m H2).
+intro.
+ omega.
+Qed.
+
+Lemma planar_L1_rcp: forall(m:fmap)(x y:dart),
+  inv_qhmap (L m di1 x y) -> 
+    planar (L m di1 x y) -> planar m.
+Proof.
+unfold planar in |- *.
+intros.
+generalize (incr_genus_L1 m x y H).
+intro.
+simpl in H.
+decompose [and] H.
+clear H.
+generalize (genus_corollary m H2).
+intro.
+ omega.
+Qed.
+
+Lemma succf_expf_F: forall(m:fmap)(x:dart),
+  inv_qhmap m -> succf m x -> expf m x (F m x).
+Proof.
+induction m.
+ simpl in |- *.
+   unfold succf in |- *.
+   unfold pred in |- *.
+   simpl in |- *.
+    tauto.
+unfold succf in |- *.
+  unfold pred in |- *.
+  intros.
+  simpl in |- *.
+  unfold F in |- *.
+  simpl in |- *.
+  simpl in H0.
+  left.
+  fold (F m x) in |- *.
+  apply IHm.
+ simpl in H.
+    tauto.
+unfold succf in |- *.
+  unfold pred in |- *.
+   tauto.
+simpl in |- *.
+  unfold prec_Lq in |- *.
+  unfold succf in |- *.
+  unfold pred in |- *.
+  induction d.
+ simpl in |- *.
+   intros.
+   generalize H0.
+   clear H0.
+   unfold F in |- *.
+   simpl in |- *.
+   elim (eq_dart_dec x d1).
+  intros.
+    right.
+    split.
+    tauto.
+  split.
+   rewrite a in |- *.
+     apply refl_expf.
+      tauto.
+  apply refl_expf.
+    apply pred_exd_A_1.
+    tauto.
+  unfold pred in |- *.
+     tauto.
+ intros.
+   left.
+   fold (F m x) in |- *.
+   apply IHm.
+   tauto.
+ unfold succf in |- *.
+   unfold pred in |- *.
+    tauto.
+simpl in |- *.
+  intros.
+  generalize H0.
+  clear H0.
+  unfold F in |- *.
+  simpl in |- *.
+  elim (eq_dart_dec (A_1 m di0 x) d1).
+ intros.
+   assert (x = A m di0 d1).
+  apply A_1_A.
+    tauto.
+   tauto.
+  apply pred_exd with di0.
+    tauto.
+  unfold pred in |- *.
+     tauto.
+  symmetry  in |- *.
+     tauto.
+ rewrite <- H1 in |- *.
+   right.
+   split.
+  intro.
+    rewrite H2 in H0.
+    rewrite A_1_nil in H0.
+    tauto.
+   tauto.
+ split.
+  apply refl_expf.
+    apply pred_exd with di0.
+    tauto.
+  unfold pred in |- *.
+     tauto.
+ apply refl_expf.
+    tauto.
+intros.
+  fold (F m x) in |- *.
+  left.
+  apply IHm.
+  tauto.
+unfold succf in |- *.
+  unfold pred in |- *.
+   tauto.
+Qed.
+
+(* HYPOTHESIS: VERY IMPORTANT!!! *)
+
+Lemma expf_clos_symm: forall(m:fmap)(x y:dart),
+  inv_qhmap m -> expf (clos m) x y -> expf (clos m) y x.
+Admitted.
+
+Lemma expf_planar_L0_rcp: forall (m:fmap)(x y:dart),
+   inv_qhmap (L m di0 x y) -> planar (L m di0 x y) -> 
+      let mc:= clos m in
+        (~eqc mc x y \/ expf mc (A_1 mc di1 x) y).
+Proof.
+intros.
+assert (planar m).
+ apply (planar_L0_rcp m x y H H0).
+simpl in H.
+  assert (inv_hmap (clos m)).
+ apply inv_hmap_clos.
+    tauto.
+unfold inv_hmap in H2.
+  decompose [and] H2.
+  clear H2.
+  unfold prec_Lq in H.
+  assert (exd (clos m) x).
+ generalize (exd_clos m x).
+    tauto.
+assert (exd (clos m) y).
+ generalize (exd_clos m y).
+    tauto.
+generalize H1 H0.
+  unfold planar in |- *.
+  unfold genus in |- *.
+  unfold ec in |- *.
+  simpl in |- *.
+  elim (eqc_dec (clos m) x y).
+ intro.
+   elim (eq_dart_dec (A (clos m) di0 x) y).
+  elim (eq_dart_dec y (A (clos m) di0 x)).
+   intros.
+     right.
+     assert (x = A_1 (clos m) di0 y).
+    apply A_A_1.
+      tauto.
+     tauto.
+     tauto.
+     tauto.
+   rewrite H8 in |- *.
+     fold mc in |- *.
+     fold (F mc y) in |- *.
+     assert (succf mc y).
+    unfold succf in |- *.
+      split.
+     unfold mc in |- *.
+       generalize (H4 y di0).
+        tauto.
+    unfold mc in |- *.
+      rewrite <- H8 in |- *.
+      generalize (H4 x di1).
+       tauto.
+   unfold mc in |- *.
+     apply expf_clos_symm.
+     tauto.
+   fold mc in |- *.
+     apply (succf_expf_F mc y).
+     tauto.
+    tauto.
+  intros.
+    symmetry  in a0.
+     tauto.
+ elim (eq_dart_dec y (A (clos m) di0 x)).
+  intro.
+    symmetry  in a0.
+     tauto.
+ elim (expf_dec (clos m) (A_1 (clos m) di1 x) y).
+   tauto.
+ intros.
+   assert
+    (nv m + (ne m - 1) + (nf m + -1) - nd m =
+     nv m + ne m + nf m - nd m + -1 * 2).
+   omega.
+ rewrite H8 in H7.
+   clear H8.
+   rewrite Z_div_plus in H7.
+  assert (nc m - (nv m + ne m + nf m - nd m) / 2 <> 0).
+    omega.
+   tauto.
+  omega.
+ tauto.
+Qed.
+
+Lemma expf_planar_L1_rcp: forall (m:fmap)(x y:dart),
+   inv_qhmap (L m di1 x y) -> planar (L m di1 x y) -> 
+      let mc:= clos m in
+        (~eqc mc x y \/ expf mc x (A mc di0 y)).
+Proof.
+intros.
+assert (planar m).
+ apply (planar_L1_rcp m x y H H0).
+simpl in H.
+  assert (inv_hmap (clos m)).
+ apply inv_hmap_clos.
+    tauto.
+unfold inv_hmap in H2.
+  decompose [and] H2.
+  clear H2.
+  unfold prec_Lq in H.
+  assert (exd (clos m) x).
+ generalize (exd_clos m x).
+    tauto.
+assert (exd (clos m) y).
+ generalize (exd_clos m y).
+    tauto.
+generalize H1 H0.
+  unfold planar in |- *.
+  unfold genus in |- *.
+  unfold ec in |- *.
+  simpl in |- *.
+  elim (eqc_dec (clos m) x y).
+ intro.
+   elim (eq_dart_dec (A (clos m) di1 x) y).
+  elim (eq_dart_dec y (A (clos m) di1 x)).
+   intros.
+     right.
+     assert (x = A_1 (clos m) di1 y).
+    apply A_A_1.
+      tauto.
+     tauto.
+     tauto.
+     tauto.
+   set (y0 := A mc di0 y) in |- *.
+     assert (y = A_1 mc di0 y0).
+    apply A_A_1.
+     unfold mc in |- *.
+        tauto.
+    unfold mc in |- *.
+       tauto.
+    unfold mc in |- *.
+      unfold y0 in |- *.
+      unfold mc in |- *.
+      assert (succ (clos m) di0 y).
+     generalize (H4 y di0).
+        tauto.
+    apply succ_exd_A.
+      tauto.
+     tauto.
+    fold y0 in |- *.
+       tauto.
+   rewrite H8 in |- *.
+     rewrite H9 in |- *.
+     fold mc in |- *.
+     fold (F mc y0) in |- *.
+     assert (succf mc y0).
+    unfold succf in |- *.
+      unfold y0 in |- *.
+      split.
+     unfold pred in |- *.
+       fold y0 in |- *; rewrite <- H9 in |- *.
+       apply exd_not_nil with m.
+       tauto.
+      tauto.
+    unfold pred in |- *.
+      fold y0 in |- *.
+      rewrite <- H9 in |- *.
+      fold (pred mc di1 y) in |- *.
+      generalize (H4 y di1).
+       tauto.
+   unfold mc in |- *.
+     apply expf_clos_symm.
+     tauto.
+   fold mc in |- *.
+     apply succf_expf_F.
+    unfold mc in |- *.
+       tauto.
+    tauto.
+  intros.
+    symmetry  in a0.
+     tauto.
+ elim (eq_dart_dec y (A (clos m) di1 x)).
+  intro.
+    symmetry  in a0.
+     tauto.
+ elim (expf_dec (clos m) x (A (clos m) di0 y)).
+  fold mc in |- *.
+     tauto.
+ intros.
+   assert
+    (nv m - 1 + ne m + (nf m + -1) - nd m =
+     nv m + ne m + nf m - nd m + -1 * 2).
+   omega.
+ rewrite H8 in H7.
+   clear H8.
+   rewrite Z_div_plus in H7.
+  assert (nc m - (nv m + ne m + nf m - nd m) / 2 <> 0).
+    omega.
+   tauto.
+  omega.
+ tauto.
+Qed.
+
+Theorem plf_planar_rcp: forall m:fmap,
+  inv_qhmap m -> genus m = 0 -> plf m.
+Proof.
+intros.
+induction m.
+ simpl in |- *.
+    tauto.
+simpl in |- *.
+  simpl in H.
+  apply IHm.
+  tauto.
+rewrite eq_genus_I in H0.
+  tauto.
+simpl in |- *.
+   tauto.
+induction d.
+ simpl in |- *.
+   split.
+  apply IHm.
+   simpl in H.
+      tauto.
+  generalize (planar_L0_rcp m d0 d1).
+    unfold planar in |- *.
+     tauto.
+ apply expf_planar_L0_rcp.
+   tauto.
+  tauto.
+ simpl in |- *.
+   split.
+  apply IHm.
+   simpl in H.
+      tauto.
+  generalize (planar_L1_rcp m d0 d1).
+    unfold planar in |- *.
+     tauto.
+ apply expf_planar_L1_rcp.
+   tauto.
+  tauto.
+Qed.
+
+(* Corollary: *)
+
+Theorem plf_Euler_Poincare_rcp: forall m:fmap,
+  inv_qhmap m -> ec m / 2 = nc m -> plf m.
+Proof.
+intros.
+generalize (plf_planar_rcp m H).
+unfold genus in |- *.
+intro.
+apply H1.
+ omega.
+Qed.
+
+(* Corollary: CHARACTERIZATION OF THE PLANAR POLYHEDRA: *)
+
+Theorem Euler_Poincare_criterion: forall m:fmap,
+  inv_qhmap m -> (plf m <-> ec m / 2 = nc m).
+Proof.
+intros.
+split.
+ apply plf_Euler_Poincare.
+    tauto.
+apply plf_Euler_Poincare_rcp.
+   tauto.
 Qed.
 
 (*==========================================================
@@ -1492,3 +2327,4 @@ Qed.
 
 ============================================================
 ===========================================================*)
+

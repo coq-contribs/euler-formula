@@ -7,10 +7,13 @@
 
    PART 1: BASES, FMAPS, QHMAPS, HMAPS, CLOSURES OF A, A_1
 
-	       (J.-F. Dufourd, June 2006)
+	(J.-F. Dufourd, June 2006 - FOR PUBLICATION
+              completed in October 2007)
 
 ============================================================
 ==========================================================*)
+
+(* coqtop -opt *)
 
 Require Import Arith.
 Require Import EqNat.
@@ -34,7 +37,7 @@ double induction i k.
 Defined.
 
 (*========================================================
-                    DARTS AS NATURALS
+            DARTS AS NATURALS
 ========================================================*)
 
 (* For simplicity, dart is nat, 
