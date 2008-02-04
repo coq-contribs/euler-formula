@@ -6,16 +6,17 @@
 
         PART 2: CLOSURE OF QHMAPS, FACES, PATHS
 
-                (J.-F. Dufourd, June 2006)
+         (J.-F. Dufourd, June 2006 - FOR PUBLICATION
+              completed in October 2007)
 
 ============================================================
 ==========================================================*)
 
-Require Export Euler1.
-
 (*==========================================================
                CLOSURE of qhmap
 ==========================================================*)
+
+Require Export Euler1.
 
 (* Closure designed for qhmaps, but written on fmaps,
 as usual: *)
