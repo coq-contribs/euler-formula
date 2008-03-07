@@ -1,9 +1,0 @@
-Euler1.vo: Euler1.v
-Euler1.vi: Euler1.v
-Euler2.vo: Euler2.v Euler1.vo
-Euler2.vi: Euler2.v Euler1.vo
-Euler3.vo: Euler3.v Euler2.vo
-Euler3.vi: Euler3.v Euler2.vo
-Euler1.html: Euler1.v
-Euler2.html: Euler2.v Euler1.html
-Euler3.html: Euler3.v Euler2.html
