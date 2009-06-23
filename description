@@ -7,7 +7,6 @@ Institution: University of Strasbourg, LSIIT (UMR CNRS 7005)
 Address: Boulevard S. Brant, BP10413, 67400 Illkirch
 Date: September 2006
 Description: This library formalizes the combinatorial hypermaps and their properties in a constructive way. It gives the proofs of the Genus Theorem and of the Euler Formula for the polyhedra. 
-URL:
 License: LGPL
 Keywords: polyhedron, hypermap, genus, Euler formula, assisted proofs
 Require:
