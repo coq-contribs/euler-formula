@@ -15,6 +15,8 @@
 
 (* coqtop -opt *)
 
+Global Set Asymmetric Patterns.
+
 Require Import Arith.
 Require Import EqNat.
 
