@@ -1035,7 +1035,7 @@ induction m.
  simpl in |- *.
    cut
     (nv m + 1 + (ne m + 1) + (nf m + 1) - (nd m + 1) =
-     Zsucc (Zsucc (nv m + ne m + nf m - nd m))).
+     Z.succ (Z.succ (nv m + ne m + nf m - nd m))).
   intros.
     rewrite H.
     apply Zeven_Sn.
@@ -1075,13 +1075,13 @@ induction m.
      intro.
        cut
         (nv m + (ne m - 1) + (nf m + -1) - nd m =
-         Zpred (Zpred (nv m + ne m + nf m - nd m))).
+         Z.pred (Z.pred (nv m + ne m + nf m - nd m))).
       intro.
         rewrite H.
         apply Zeven_pred.
         apply Zodd_pred.
         tauto.
-      unfold Zpred in |- *.
+      unfold Z.pred in |- *.
         omega.
   simpl in |- *.
     elim (eq_dart_dec (A (clos m) di1 d0) d1).
@@ -1124,13 +1124,13 @@ induction m.
      intro.
        cut
         (nv m - 1 + ne m + (nf m + -1) - nd m =
-         Zpred (Zpred (nv m + ne m + nf m - nd m))).
+         Z.pred (Z.pred (nv m + ne m + nf m - nd m))).
       intro.
         rewrite H.
         apply Zeven_pred.
         apply Zodd_pred.
         tauto.
-      unfold Zpred in |- *.
+      unfold Z.pred in |- *.
         omega.
 Qed.
 
@@ -1208,12 +1208,12 @@ induction m.
        apply IHm; tauto.
        cut
         (nv m + (ne m - 1) + (nf m + -1) - nd m =
-         Zpred (Zpred (nv m + ne m + nf m - nd m))).
+         Z.pred (Z.pred (nv m + ne m + nf m - nd m))).
         intro.
           rewrite H0.
-          unfold Zpred in |- *.
+          unfold Z.pred in |- *.
           omega.
-        unfold Zpred in |- *.
+        unfold Z.pred in |- *.
           omega.
    intros.
      assert (2 * nc m >= nv m + ne m + nf m - nd m).
@@ -1349,15 +1349,15 @@ intros.
 cut (a >= b / 2).
 intro.
    omega.
- assert (b = 2 * Zdiv2 b).
+ assert (b = 2 * Z.div2 b).
   apply Zeven_div2.
     tauto.
   rewrite H2 in H1.
-    assert (a >= Zdiv2 b).
+    assert (a >= Z.div2 b).
    omega.
    rewrite H2.
  rewrite Zmult_comm.
-     assert (Zdiv2 b * 2 / 2 = Zdiv2 b).
+     assert (Z.div2 b * 2 / 2 = Z.div2 b).
   apply Z_div_mult.
       omega.
     rewrite H4.
